@@ -1,9 +1,8 @@
 FROM node:18-slim
 WORKDIR /app
-COPY package.json .
-RUN npm install
 COPY . .
-RUN npm run build
-EXPOSE 4200
-CMD ["npm", "start"]
-
+RUN npm install
+RUN npm audit fix --force
+RUN npm run build --prod
+FROM nginx:alpine
+COPY --from=0 /app/dist/demo-angular-app /usr/share/nginx/html
